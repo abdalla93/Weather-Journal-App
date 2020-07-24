@@ -23,8 +23,10 @@ const projectData = async () => {
 
   try {
     const weatherData = await response.json();
-    const responseData = await postData(weatherData.main.temp, newDate);
-    updateUI(responseData);
+    await postData(weatherData.main.temp, newDate).then(async () => {
+      const responseData = await getData();
+      updateUI(responseData);
+    });
   } catch (err) {
     console.log(err);
   }
@@ -54,4 +56,14 @@ function updateUI(responseData) {
   DOMDate.innerHTML = `${responseData.date}`;
   DOMContent.innerHTML = `${responseData.userResponse}`;
 }
+const getData = async () => {
+  const data = await fetch("/data");
+  try {
+    const newData = await data.json();
+    return newData;
+  } catch (err) {
+    console.log(err);
+    return err;
+  }
+};
 generateButton.addEventListener("click", projectData);
